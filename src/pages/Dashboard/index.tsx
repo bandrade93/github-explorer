@@ -25,7 +25,7 @@ const Dashboard: React.FC = () => {
             '@GithubExplorer:repositories',
         );
 
-        if(storagedRepositories) {
+        if (storagedRepositories) {
             return JSON.parse(storagedRepositories);
         }
 
@@ -33,10 +33,15 @@ const Dashboard: React.FC = () => {
     });
 
     useEffect(() => {
-        localStorage.setItem('@GithubExplorer:repositories',  JSON.stringify(repositories))
+        localStorage.setItem(
+            '@GithubExplorer:repositories',
+            JSON.stringify(repositories),
+        );
     }, [repositories]);
 
-    async function handleAddRepository(event: FormEvent<HTMLFormElement>): Promise<void> {
+    async function handleAddRepository(
+        event: FormEvent<HTMLFormElement>,
+    ): Promise<void> {
         event.preventDefault();
 
         if (!newRepo) {
@@ -49,7 +54,7 @@ const Dashboard: React.FC = () => {
 
             const repository = response.data;
 
-            setRepositories([ ... repositories, repository]);
+            setRepositories([...repositories, repository]);
             setNewRepo('');
             setInputError('');
         } catch (err) {
@@ -58,37 +63,40 @@ const Dashboard: React.FC = () => {
     }
 
     return (
-        <>
-            <img src={logoImg} alt="Github Explorer" />
-            <Title>Explore repositórios no Github</Title>
+      <>
+          <img src={logoImg} alt="Github Explorer" />
+          <Title>Explore repositórios no Github</Title>
 
-            <Form hasError={!!inputError} onSubmit={handleAddRepository}>
-                <input
-                    value={newRepo}
-                    onChange={(e) => setNewRepo(e.target.value)}
-                    placeholder="Digite o nome do repositório"
+          <Form hasError={!!inputError} onSubmit={handleAddRepository}>
+              <input
+                  value={newRepo}
+                  onChange={(e) => setNewRepo(e.target.value)}
+                  placeholder="Digite o nome do repositório"
                 />
-                <button type="submit">Pesquisar</button>
+              <button type="submit">Pesquisar</button>
             </Form>
 
-            { inputError && <Error>{inputError}</Error> }
+          {inputError && <Error>{inputError}</Error>}
 
             <Repositories>
-                {repositories.map(repository => (
-                    <Link key={repository.full_name} to={`/repository/${repository.full_name}`}>
+                {repositories.map((repository) => (
+                <Link
+                      key={repository.full_name}
+                      to={`/repository/${repository.full_name}`}
+                    >
                         <img
                             src={repository.owner.avatar_url}
                             alt={repository.owner.login}
-                        />
-                        <div>
-                            <strong>{repository.full_name}</strong>
-                            <p>{repository.description}</p>
+                />
+                      <div>
+                          <strong>{repository.full_name}</strong>
+                          <p>{repository.description}</p>
                         </div>
 
-                        <FiChevronRight size={20}/>
+                      <FiChevronRight size={20} />
                     </Link>
                 ))}
-            </Repositories>
+        </Repositories>
         </>
     );
 };
